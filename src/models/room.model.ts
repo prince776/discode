@@ -36,6 +36,18 @@ class Room {
                 callback(null, res[0]);
             }
         });
+    }
+
+    static updateById = (data: RoomData, callback: Callback) => {
+        sql.query('UPDATE rooms SET ? WHERE id = ?', [data, data.id], (error, res) => {
+            if (error) {
+                callback({ error, message: 'Mysql error' });
+            } else if (!res.affectedRows) {
+                callback({ message: 'No room found' });
+            } else {
+                callback(null, data);
+            }
+        });
     };
 }
 
