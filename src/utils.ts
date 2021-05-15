@@ -10,8 +10,8 @@ const sendData = (res: Response, message: string, data: any, success: boolean, s
 
 export function sendSuccess(res: Response, message: string, data: any, status: number = 200) {
     sendData(res, message, data, true, status);
-} 
+}
 
 export function sendError(res: Response, message: string, data: any = {}, status: number = 400) {
-    sendData(res, message, data, false , status);
+    sendData(res, message, data, false, status);
 }

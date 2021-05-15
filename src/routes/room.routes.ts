@@ -1,6 +1,6 @@
 import express from 'express';
 import Room from './../models/room.model';
-import { sendSuccess, sendError} from './../utils';
+import { sendSuccess, sendError } from './../utils';
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.post('/', (req, res) => {
         } else {
             sendSuccess(res, 'Room created successfully', data);
         }
-    })
+    });
 });
 
 export = router;

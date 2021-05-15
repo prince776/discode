@@ -3,26 +3,25 @@ import { type } from 'os';
 import sql from './db';
 
 interface RoomData {
-    id?: number,
-    title?: string,
-    body?: string
-};
+    id?: number;
+    title?: string;
+    body?: string;
+}
 
-type Callback = (error: { error?: MysqlError, message: string } | null, data?: RoomData) => void;
+type Callback = (error: { error?: MysqlError; message: string } | null, data?: RoomData) => void;
 
-class Room 
-{
+class Room {
     private data: RoomData;
     constructor(data: RoomData) {
         this.data = data;
-    };
+    }
 
-    static create = (data: RoomData, callback : Callback) => {
+    static create = (data: RoomData, callback: Callback) => {
         sql.query('INSERT INTO rooms SET ? ', data, (error, res) => {
             if (error) {
                 callback({ error, message: 'Mysql error' });
             } else {
-                callback(null, { ...data, id: res.insertId});        
+                callback(null, { ...data, id: res.insertId });
             }
         });
     };
@@ -37,7 +36,7 @@ class Room
                 callback(null, res[0]);
             }
         });
-    }
+    };
 }
 
 export = Room;
