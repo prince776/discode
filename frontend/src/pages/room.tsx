@@ -3,6 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import Editor from '../components/editor';
 import { languageToEditorMode } from '../config/mappings';
 import API from '../utils/API';
+import { debounce } from '../utils/utils';
 
 import socket from './../utils/socket';
 
@@ -129,12 +130,12 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
 
     const handleUpdateBody = (value: string) => {
         setBody(value);
-        socket.emit('updateBody', { value, roomId: id });
+        debounce(() => socket.emit('updateBody', { value, roomId: id }), 100)();
     };
 
     const handleUpdateInput = (value: string) => {
         setInput(value);
-        socket.emit('updateInput', { value, roomId: id });
+        debounce(() => socket.emit('updateInput', { value, roomId: id }), 100)();
     };
 
     return (
