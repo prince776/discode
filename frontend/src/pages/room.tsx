@@ -4,6 +4,8 @@ import Editor from '../components/editor';
 import { languageToEditorMode } from '../config/mappings';
 import API from '../utils/API';
 
+import socket from './../utils/socket';
+
 const Room: React.FC<RouteComponentProps<any>> = (props) => {
     const [id, setId] = useState<number>(0);
     const [title, setTitle] = useState<string>('');
@@ -28,6 +30,19 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
     const [submissionCheckerId, setSubmissionCheckerId] = useState<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
+        socket.on('updateBody', (body) => {
+            setBody(body);
+        });
+        socket.on('updateInput', (input) => {
+            setInput(input);
+        });
+        socket.on('updateLanguage', (language) => {
+            setLanguage(language);
+        });
+        socket.on('updateOutput', (output) => {
+            setOutput(output);
+        });
+
         const id = props.match.params.id;
         setId(id);
         API.get(`/api/room/${id}`)
@@ -55,7 +70,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             const querystring = params.toString();
             API.get(`http://api.paiza.io/runners/get_details?${querystring}`).then((res) => {
                 const { stdout, stderr } = res.data;
-                setOutput(`${stdout}${stderr}`);
+                socket.emit('updateOutput', `${stdout}${stderr}`);
             });
         }
     }, [submissionStatus]);
@@ -108,6 +123,14 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
         });
     };
 
+    const handleUpdateBody = (value: string) => {
+        socket.emit('updateBody', value);
+    };
+
+    const handleUpdateInput = (value: string) => {
+        socket.emit('updateInput', value);
+    };
+
     return (
         <div>
             <div className="row container-fluid">
@@ -115,7 +138,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                     <label>Choose Language</label>
                     <select
                         className="form-select"
-                        onChange={(event) => setLanguage(event.target.value)}
+                        onChange={(event) => socket.emit('updateLanguage', event.target.value)}
                     >
                         {languages.map((lang, index) => {
                             return (
@@ -166,7 +189,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                         // @ts-ignore
                         language={languageToEditorMode[language]}
                         body={body}
-                        setBody={setBody}
+                        setBody={handleUpdateBody}
                     />
                 </div>
                 <div className="col-6 text-center">
@@ -175,7 +198,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                         theme={theme}
                         language={''}
                         body={input}
-                        setBody={setInput}
+                        setBody={handleUpdateInput}
                         height={'35vh'}
                     />
                     <h5>Output</h5>
