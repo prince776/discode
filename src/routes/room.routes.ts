@@ -17,7 +17,7 @@ router.get('/:id', (req, res) => {
 router.patch('/:id', (req, res) => {
     const { title, body } = req.body;
     if (!title) return sendError(res, "Title can't be empty");
-    let id = +req.params.id;
+    const id = +req.params.id;
 
     Room.updateById({ title, body, id }, (error, data) => {
         if (error) {
