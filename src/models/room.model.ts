@@ -36,7 +36,7 @@ class Room {
                 callback(null, res[0]);
             }
         });
-    }
+    };
 
     static updateById = (data: RoomData, callback: Callback) => {
         sql.query('UPDATE rooms SET ? WHERE id = ?', [data, data.id], (error, res) => {
