@@ -72,7 +72,9 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             const querystring = params.toString();
             API.get(`http://api.paiza.io/runners/get_details?${querystring}`).then((res) => {
                 const { stdout, stderr } = res.data;
-                socket.emit('updateOutput', { value: `${stdout}${stderr}`, roomId: id });
+                const output = `${stdout}${stderr}`;
+                setOutput(output);
+                socket.emit('updateOutput', { value: output, roomId: id });
             });
         }
     }, [submissionStatus]);
@@ -126,10 +128,12 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
     };
 
     const handleUpdateBody = (value: string) => {
+        setBody(value);
         socket.emit('updateBody', { value, roomId: id });
     };
 
     const handleUpdateInput = (value: string) => {
+        setInput(value);
         socket.emit('updateInput', { value, roomId: id });
     };
 
@@ -140,9 +144,13 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                     <label>Choose Language</label>
                     <select
                         className="form-select"
-                        onChange={(event) =>
-                            socket.emit('updateLanguage', { value: event.target.value, roomId: id })
-                        }
+                        onChange={(event) => {
+                            setLanguage(event.target.value);
+                            socket.emit('updateLanguage', {
+                                value: event.target.value,
+                                roomId: id
+                            });
+                        }}
                     >
                         {languages.map((lang, index) => {
                             return (

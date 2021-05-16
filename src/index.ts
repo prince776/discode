@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
+import path from 'path';
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -38,19 +39,27 @@ io.on('connection', (socket) => {
         socket.join(roomId);
     });
     socket.on('updateBody', ({ value, roomId }) => {
-        io.to(roomId).emit('updateBody', value);
+        socket.broadcast.to(roomId).emit('updateBody', value);
     });
     socket.on('updateInput', ({ value, roomId }) => {
-        io.to(roomId).emit('updateInput', value);
+        socket.broadcast.to(roomId).emit('updateInput', value);
     });
     socket.on('updateLanguage', ({ value, roomId }) => {
-        io.to(roomId).emit('updateLanguage', value);
+        socket.broadcast.to(roomId).emit('updateLanguage', value);
     });
     socket.on('updateOutput', ({ value, roomId }) => {
-        io.to(roomId).emit('updateOutput', value);
+        socket.broadcast.to(roomId).emit('updateOutput', value);
     });
 });
 
 server.listen(PORT, () => {
     console.log(`Server listening on port: ${PORT}`);
 });
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('frontend/build'));
+    app.get('*', (req, res) => {
+        console.log('req: ', req.url);
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
