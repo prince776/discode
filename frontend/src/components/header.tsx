@@ -44,14 +44,17 @@ const Header: React.FC<RouteComponentProps<any>> = (props) => {
                         <input
                             className="form-control me-2"
                             type="search"
-                            placeholder="Room id"
+                            placeholder="Enter Room ID"
                             aria-label="Search"
                             value={roomId}
                             onChange={(e) => setRoomId(e.target.value)}
                         />
                         <button
                             className="btn btn-outline-success"
-                            onClick={() => props.history.push(`/room/${roomId}`)}
+                            onClick={() => {
+                                props.history.push(`/room/${roomId}`);
+                                setRoomId('');
+                            }}
                         >
                             Join
                         </button>

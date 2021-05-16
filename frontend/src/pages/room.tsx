@@ -7,7 +7,7 @@ import API from '../utils/API';
 import socket from './../utils/socket';
 
 const Room: React.FC<RouteComponentProps<any>> = (props) => {
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<string>('');
     const [title, setTitle] = useState<string>('');
     const [body, setBody] = useState<string>('');
     const [input, setInput] = useState<string>('');
@@ -30,6 +30,10 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
     const [submissionCheckerId, setSubmissionCheckerId] = useState<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
+        const id = props.match.params.id;
+        setId(id);
+
+        socket.emit('joinroom', id);
         socket.on('updateBody', (body) => {
             setBody(body);
         });
@@ -43,8 +47,6 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             setOutput(output);
         });
 
-        const id = props.match.params.id;
-        setId(id);
         API.get(`/api/room/${id}`)
             .then((res) => {
                 const { title, body, language, input } = res.data.data;
@@ -70,7 +72,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             const querystring = params.toString();
             API.get(`http://api.paiza.io/runners/get_details?${querystring}`).then((res) => {
                 const { stdout, stderr } = res.data;
-                socket.emit('updateOutput', `${stdout}${stderr}`);
+                socket.emit('updateOutput', { value: `${stdout}${stderr}`, roomId: id });
             });
         }
     }, [submissionStatus]);
@@ -124,11 +126,11 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
     };
 
     const handleUpdateBody = (value: string) => {
-        socket.emit('updateBody', value);
+        socket.emit('updateBody', { value, roomId: id });
     };
 
     const handleUpdateInput = (value: string) => {
-        socket.emit('updateInput', value);
+        socket.emit('updateInput', { value, roomId: id });
     };
 
     return (
@@ -138,7 +140,9 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                     <label>Choose Language</label>
                     <select
                         className="form-select"
-                        onChange={(event) => socket.emit('updateLanguage', event.target.value)}
+                        onChange={(event) =>
+                            socket.emit('updateLanguage', { value: event.target.value, roomId: id })
+                        }
                     >
                         {languages.map((lang, index) => {
                             return (

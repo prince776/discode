@@ -34,17 +34,20 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    socket.on('updateBody', (value) => {
-        io.emit('updateBody', value);
+    socket.on('joinroom', (roomId) => {
+        socket.join(roomId);
     });
-    socket.on('updateInput', (value) => {
-        io.emit('updateInput', value);
+    socket.on('updateBody', ({ value, roomId }) => {
+        io.to(roomId).emit('updateBody', value);
     });
-    socket.on('updateLanguage', (value) => {
-        io.emit('updateLanguage', value);
+    socket.on('updateInput', ({ value, roomId }) => {
+        io.to(roomId).emit('updateInput', value);
     });
-    socket.on('updateOutput', (value) => {
-        io.emit('updateOutput', value);
+    socket.on('updateLanguage', ({ value, roomId }) => {
+        io.to(roomId).emit('updateLanguage', value);
+    });
+    socket.on('updateOutput', ({ value, roomId }) => {
+        io.to(roomId).emit('updateOutput', value);
     });
 });
 
