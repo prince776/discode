@@ -15,11 +15,11 @@ router.get('/:id', (req, res) => {
 });
 
 router.patch('/:id', (req, res) => {
-    const { title, body } = req.body;
+    const { title, body, input, language } = req.body;
     if (!title) return sendError(res, "Title can't be empty");
     const id = +req.params.id;
 
-    Room.updateById({ title, body, id }, (error, data) => {
+    Room.updateById({ title, body, id, input, language }, (error, data) => {
         if (error) {
             sendError(res, error.message);
         } else {
@@ -29,10 +29,10 @@ router.patch('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const { title, body } = req.body;
+    const { title, body, input, language } = req.body;
     if (!title) return sendError(res, "Title can't be empty");
 
-    Room.create({ title, body }, (error, data) => {
+    Room.create({ title, body, input, language }, (error, data) => {
         if (error) {
             sendError(res, error.message);
         } else {
