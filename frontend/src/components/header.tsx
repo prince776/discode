@@ -1,7 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 
-const Header: React.FC = () => {
+const Header: React.FC<RouteComponentProps<any>> = (props) => {
+    const [roomId, setRoomId] = useState<string>();
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
@@ -27,31 +30,36 @@ const Header: React.FC = () => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link active" aria-current="page" to="/">
+                            <Link className="nav-link active" aria-current="page" to="/newroom">
                                 New Room
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link active" aria-current="page" to="/">
+                            <Link className="nav-link active" aria-current="page" to="/joinroom">
                                 Join Room
                             </Link>
                         </li>
                     </ul>
-                    <form className="d-flex">
+                    <div className="d-flex">
                         <input
                             className="form-control me-2"
                             type="search"
                             placeholder="Room id"
                             aria-label="Search"
+                            value={roomId}
+                            onChange={(e) => setRoomId(e.target.value)}
                         />
-                        <button className="btn btn-outline-success" type="submit">
+                        <button
+                            className="btn btn-outline-success"
+                            onClick={() => props.history.push(`/room/${roomId}`)}
+                        >
                             Join
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </nav>
     );
 };
 
-export default Header;
+export default withRouter(Header);

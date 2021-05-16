@@ -1,6 +1,8 @@
 import Room from './pages/room';
 import Home from './pages/home';
 import NotFound from './pages/notfound';
+import JoinRoom from './pages/joinroom';
+import NewRoom from './pages/newroom';
 
 interface IRoute {
     path: string;
@@ -24,6 +26,16 @@ const routes: Array<IRoute> = [
         path: '/404',
         exact: true,
         component: NotFound
+    },
+    {
+        path: '/joinroom',
+        exact: true,
+        component: JoinRoom
+    },
+    {
+        path: '/newroom',
+        exact: true,
+        component: NewRoom
     },
 
     // Should stay at end
