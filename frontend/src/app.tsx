@@ -8,6 +8,7 @@ const App: React.FC = () => {
         <div>
             <BrowserRouter>
                 <Header />
+                <br />
                 <Switch>
                     {routes.map((route, index) => {
                         return (

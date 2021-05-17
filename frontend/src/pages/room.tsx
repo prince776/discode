@@ -4,6 +4,7 @@ import Editor from '../components/editor';
 import { languageToEditorMode } from '../config/mappings';
 import API from '../utils/API';
 import { debounce } from '../utils/utils';
+import SplitPane from 'react-split-pane';
 
 import socket from './../utils/socket';
 
@@ -13,6 +14,10 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
     const [body, setBody] = useState<string>('');
     const [input, setInput] = useState<string>('');
     const [output, setOutput] = useState<string>('');
+
+    const [widthLeft, setWidthLeft] = useState<string>('');
+    const [widthRight, setWidthRight] = useState<string>('');
+    const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
     const languages = Object.keys(languageToEditorMode);
     const themes = ['monokai', 'github', 'solarized_dark', 'dracula'];
@@ -59,6 +64,8 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             .catch((err) => {
                 props.history.push('/404');
             });
+
+        window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
     }, [props]);
 
     useEffect(() => {
@@ -138,6 +145,11 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
         debounce(() => socket.emit('updateInput', { value, roomId: id }), 100)();
     };
 
+    const handleWidthChange = (x: number) => {
+        setWidthRight((100 - x - 2).toString());
+        setWidthLeft(x.toString());
+    };
+
     return (
         <div>
             <div className="row container-fluid">
@@ -194,18 +206,27 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             </div>
 
             <hr />
-            <div className="row p-0 m-0 text-center">
-                <div className="col-6">
+            <SplitPane
+                split="vertical"
+                minSize={200}
+                maxSize={windowWidth - 200}
+                defaultSize={windowWidth / 2}
+                className="row text-center"
+                style={{ height: '78vh' }}
+                onChange={handleWidthChange}
+            >
+                <div>
                     <h5>Code Here</h5>
                     <Editor
                         theme={theme}
+                        width={widthLeft}
                         // @ts-ignore
                         language={languageToEditorMode[language]}
                         body={body}
                         setBody={handleUpdateBody}
                     />
                 </div>
-                <div className="col-6 text-center">
+                <div className="text-center">
                     <h5>Input</h5>
                     <Editor
                         theme={theme}
@@ -213,6 +234,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                         body={input}
                         setBody={handleUpdateInput}
                         height={'35vh'}
+                        width={widthRight}
                     />
                     <h5>Output</h5>
                     <Editor
@@ -222,9 +244,10 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                         setBody={setOutput}
                         readOnly={true}
                         height={'40vh'}
+                        width={widthRight}
                     />
                 </div>
-            </div>
+            </SplitPane>
         </div>
     );
 };

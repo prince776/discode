@@ -20,10 +20,19 @@ interface EditorProps {
     body: string;
     setBody: (body: string) => void;
     height?: string;
+    width?: string;
     readOnly?: boolean;
 }
 
-const Editor: React.FC<EditorProps> = ({ language, theme, body, setBody, height, readOnly }) => {
+const Editor: React.FC<EditorProps> = ({
+    language,
+    theme,
+    body,
+    setBody,
+    height,
+    readOnly,
+    width
+}) => {
     return (
         <div>
             <AceEditor
@@ -31,7 +40,7 @@ const Editor: React.FC<EditorProps> = ({ language, theme, body, setBody, height,
                 theme={theme}
                 onChange={(value) => setBody(value)}
                 value={body}
-                width="100%"
+                width={width ? width : '100%'}
                 height={height ? height : '78.7vh'}
                 readOnly={readOnly ? readOnly : false}
                 fontSize={17}
