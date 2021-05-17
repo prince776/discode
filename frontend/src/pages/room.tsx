@@ -79,8 +79,12 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
             });
             const querystring = params.toString();
             API.get(`http://api.paiza.io/runners/get_details?${querystring}`).then((res) => {
-                const { stdout, stderr } = res.data;
-                const output = `${stdout}${stderr}`;
+                const { stdout, stderr, build_stderr } = res.data;
+                console.log(res.data);
+                let output = '';
+                if (stdout) output += stdout;
+                if (stderr) output += stderr;
+                if (build_stderr) output += build_stderr;
                 setOutput(output);
                 socket.emit('updateOutput', { value: output, roomId: id });
             });
