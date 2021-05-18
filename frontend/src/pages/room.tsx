@@ -56,9 +56,9 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
         API.get(`/api/room/${id}`)
             .then((res) => {
                 const { title, body, language, input } = res.data.data;
-                setTitle(title);
-                setBody(body);
-                setInput(input);
+                setTitle(title ?? '');
+                setBody(body ?? '');
+                setInput(input ?? '');
                 if (language) setLanguage(language);
             })
             .catch((err) => {
