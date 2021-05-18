@@ -25,7 +25,18 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
     const languages = Object.keys(languageToEditorMode);
-    const themes = ['monokai', 'github', 'solarized_dark', 'dracula'];
+    const themes = [
+        'monokai',
+        'github',
+        'solarized_dark',
+        'dracula',
+        'eclipse',
+        'tomorrow_night',
+        'tomorrow_night_blue',
+        'xcode',
+        'ambiance',
+        'solarized_light'
+    ].sort();
 
     const [language, setLanguage] = useState<string>(localStorage.getItem('language') ?? 'c');
     const [theme, setTheme] = useState<string>(localStorage.getItem('theme') ?? 'monokai');

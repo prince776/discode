@@ -52,8 +52,10 @@ const Header: React.FC<RouteComponentProps<any>> = (props) => {
                         <button
                             className="btn btn-outline-success"
                             onClick={() => {
-                                props.history.push(`/room/${roomId}`);
-                                setRoomId('');
+                                if (roomId) {
+                                    props.history.push(`/room/${roomId}`);
+                                    setRoomId('');
+                                }
                             }}
                         >
                             Join

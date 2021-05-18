@@ -4,7 +4,9 @@ const languageToEditorMode = {
     python: 'python',
     python3: 'python',
     java: 'java',
-    javascript: 'javascript'
+    javascript: 'javascript',
+    kotlin: 'kotlin',
+    rust: 'rust'
 };
 
 export { languageToEditorMode };
