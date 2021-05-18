@@ -7,6 +7,7 @@ import { debounce } from '../utils/utils';
 import SplitPane from 'react-split-pane';
 
 import socket from './../utils/socket';
+import { baseURL } from '../config/config';
 
 interface RoomProps {
     updatePreviousRooms: (room: string) => any;
@@ -164,8 +165,8 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
 
     return (
         <div>
-            <div className="row container-fluid">
-                <div className="form-group col-4">
+            <div className="row container-fluid text-center justify-content-center">
+                <div className="form-group col-3">
                     <label>Choose Language</label>
                     <select
                         className="form-select"
@@ -186,7 +187,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         })}
                     </select>
                 </div>
-                <div className="form-group col-4">
+                <div className="form-group col-3">
                     <label>Choose Theme</label>
                     <select
                         className="form-select"
@@ -201,7 +202,18 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         })}
                     </select>
                 </div>
-                <div className="form-group col-2">
+                <div className="form-group col">
+                    <br />
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => {
+                            navigator.clipboard.writeText(`${baseURL}/room/${id}`);
+                        }}
+                    >
+                        Copy room link
+                    </button>
+                </div>
+                <div className="form-group col">
                     <br />
                     <button
                         className="btn btn-primary"
@@ -228,7 +240,17 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                 onChange={handleWidthChange}
             >
                 <div>
-                    <h5>Code Here</h5>
+                    <div className="row">
+                        <h5 className="col">Code Here</h5>
+                        <button
+                            className="btn col-2 mx-3 mb-1 btn-secondary float-right"
+                            onClick={() => {
+                                navigator.clipboard.writeText(body);
+                            }}
+                        >
+                            Copy Code
+                        </button>
+                    </div>
                     <Editor
                         theme={theme}
                         width={widthLeft}

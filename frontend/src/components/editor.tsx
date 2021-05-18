@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({
                 onChange={(value) => setBody(value)}
                 value={body}
                 width={width ? width : '100%'}
-                height={height ? height : '78.7vh'}
+                height={height ? height : '73vh'}
                 readOnly={readOnly ? readOnly : false}
                 fontSize={17}
                 name="UNIQUE_ID_OF_DIV"
