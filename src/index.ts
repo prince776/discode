@@ -30,13 +30,18 @@ app.use('/api/room', require('./routes/room.routes'));
 import { Server, Socket } from 'socket.io';
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000'
+        origin: ['http://localhost:3000']
     }
 });
 
 io.on('connection', (socket) => {
-    socket.on('joinroom', (roomId) => {
+    socket.on('joinroom', ({ roomId, userId }) => {
         socket.join(roomId);
+        socket.broadcast.to(roomId).emit('userjoined', userId);
+
+        socket.on('disconnect', () => {
+            io.to(roomId).emit('userleft', userId);
+        });
     });
     socket.on('updateBody', ({ value, roomId }) => {
         socket.broadcast.to(roomId).emit('updateBody', value);

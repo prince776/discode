@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import Editor from '../components/editor';
 import { languageToEditorMode } from '../config/mappings';
@@ -8,6 +8,8 @@ import SplitPane from 'react-split-pane';
 
 import socket from './../utils/socket';
 import { baseURL } from '../config/config';
+import { useRef } from 'react';
+import Peer from 'peerjs';
 
 interface RoomProps {
     updatePreviousRooms: (room: string) => any;
@@ -51,11 +53,38 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
 
     const [submissionCheckerId, setSubmissionCheckerId] = useState<NodeJS.Timeout | null>(null);
 
+    const myAudio = useRef<HTMLVideoElement>(null);
+    const remoteAudio = useRef<HTMLVideoElement>(null);
+    const [remoteAudios, setRemoteAudios] = useState<{ [userId: string]: HTMLVideoElement }>({});
+    const myPeer = new Peer();
+
+    const addAudioStream = (stream: MediaStream) => {
+        console.log('Added stream');
+        let video = document.createElement('video');
+        video.srcObject = stream;
+        video.play();
+        video.addEventListener('ended', () => {
+            console.log('removing');
+            video.remove();
+        });
+    };
+
+    const connectP2P = (userId: string, stream: MediaStream) => {
+        const call = myPeer.call(userId, stream);
+
+        call.on('stream', (userStream) => {
+            console.log('peeeer:', userId);
+            addAudioStream(userStream);
+        });
+    };
+
     useEffect(() => {
         const id = props.match.params.id;
         setId(id);
 
-        socket.emit('joinroom', id);
+        myPeer.on('open', (userId) => {
+            socket.emit('joinroom', { roomId: id, userId });
+        });
         socket.on('updateBody', (body) => {
             setBody(body);
         });
@@ -69,6 +98,29 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             setOutput(output);
         });
 
+        socket.on('userleft', () => {
+            console.log('user disconnected');
+        });
+        navigator.mediaDevices
+            .getUserMedia({
+                audio: true
+            })
+            .then((stream) => {
+                if (myAudio.current) myAudio.current.srcObject = stream;
+
+                socket.on('userjoined', (userId) => {
+                    connectP2P(userId, stream);
+                });
+
+                myPeer.on('call', (call) => {
+                    call.answer(stream);
+                    call.on('stream', (userStream) => {
+                        console.log('peer ', call.peer);
+                        addAudioStream(userStream);
+                    });
+                });
+            });
+
         API.get(`/api/room/${id}`)
             .then((res) => {
                 const { title, body, language, input } = res.data.data;
@@ -80,7 +132,6 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                 setBody(body ?? '');
                 setInput(input ?? '');
                 if (language) setLanguage(language);
-                console.log(language);
             })
             .catch((err) => {
                 props.history.push('/404');
@@ -101,7 +152,6 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             const querystring = params.toString();
             API.get(`http://api.paiza.io/runners/get_details?${querystring}`).then((res) => {
                 const { stdout, stderr, build_stderr } = res.data;
-                console.log(res.data);
                 let output = '';
                 if (stdout) output += stdout;
                 if (stderr) output += stderr;
@@ -185,6 +235,14 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
 
     return (
         <div>
+            <video
+                muted
+                autoPlay
+                ref={myAudio}
+                style={{
+                    display: 'none'
+                }}
+            />
             <div className="row container-fluid text-center justify-content-center">
                 <div className="form-group col-3">
                     <label>Choose Language</label>
@@ -293,6 +351,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         width={widthRight}
                     />
                     <h5>Output</h5>
+
                     <Editor
                         theme={theme}
                         language={''}

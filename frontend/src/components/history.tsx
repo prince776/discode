@@ -42,7 +42,7 @@ const History: React.FC<HistoryProps> = ({ previousRooms }) => {
                                             textDecoration: 'none',
                                             color: 'black'
                                         }}
-                                        to={`/room/${room}`}
+                                        to={`/room/${roomId}`}
                                     >
                                         {roomTitle}
                                     </Link>
