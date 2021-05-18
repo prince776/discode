@@ -27,8 +27,8 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     const languages = Object.keys(languageToEditorMode);
     const themes = ['monokai', 'github', 'solarized_dark', 'dracula'];
 
-    const [language, setLanguage] = useState<string>('');
-    const [theme, setTheme] = useState<string>('monokai');
+    const [language, setLanguage] = useState<string>(localStorage.getItem('language') ?? 'c');
+    const [theme, setTheme] = useState<string>(localStorage.getItem('theme') ?? 'monokai');
 
     const idleStatus = 'Idle';
     const runningStatus = 'running';
@@ -69,6 +69,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                 setBody(body ?? '');
                 setInput(input ?? '');
                 if (language) setLanguage(language);
+                console.log(language);
             })
             .catch((err) => {
                 props.history.push('/404');
@@ -163,6 +164,14 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
         setWidthLeft(x.toString());
     };
 
+    useEffect(() => {
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+        localStorage.setItem('language', language);
+    }, [language]);
+
     return (
         <div>
             <div className="row container-fluid text-center justify-content-center">
@@ -170,6 +179,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                     <label>Choose Language</label>
                     <select
                         className="form-select"
+                        defaultValue={language}
                         onChange={(event) => {
                             setLanguage(event.target.value);
                             socket.emit('updateLanguage', {
@@ -191,6 +201,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                     <label>Choose Theme</label>
                     <select
                         className="form-select"
+                        defaultValue={theme}
                         onChange={(event) => setTheme(event.target.value)}
                     >
                         {themes.map((theme, index) => {
