@@ -8,7 +8,11 @@ import SplitPane from 'react-split-pane';
 
 import socket from './../utils/socket';
 
-const Room: React.FC<RouteComponentProps<any>> = (props) => {
+interface RoomProps {
+    updatePreviousRooms: (room: string) => any;
+}
+
+const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     const [id, setId] = useState<string>('');
     const [title, setTitle] = useState<string>('');
     const [body, setBody] = useState<string>('');
@@ -56,7 +60,11 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
         API.get(`/api/room/${id}`)
             .then((res) => {
                 const { title, body, language, input } = res.data.data;
-                setTitle(title ?? '');
+                if (title) {
+                    setTitle(title);
+                    document.title = `Discode: ${title}`;
+                    props.updatePreviousRooms(`${id}-${title}`);
+                }
                 setBody(body ?? '');
                 setInput(input ?? '');
                 if (language) setLanguage(language);
@@ -150,7 +158,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
     };
 
     const handleWidthChange = (x: number) => {
-        setWidthRight((100 - x - 2).toString());
+        setWidthRight((100 - x).toString());
         setWidthLeft(x.toString());
     };
 
@@ -215,8 +223,8 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                 minSize={200}
                 maxSize={windowWidth - 200}
                 defaultSize={windowWidth / 2}
-                className="row text-center"
-                style={{ height: '78vh' }}
+                className="row text-center "
+                style={{ height: '78vh', width: '100vw', marginRight: '0' }}
                 onChange={handleWidthChange}
             >
                 <div>
@@ -247,7 +255,7 @@ const Room: React.FC<RouteComponentProps<any>> = (props) => {
                         body={output}
                         setBody={setOutput}
                         readOnly={true}
-                        height={'40vh'}
+                        height={'39vh'}
                         width={widthRight}
                     />
                 </div>

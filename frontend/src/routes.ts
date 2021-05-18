@@ -8,19 +8,25 @@ interface IRoute {
     path: string;
     exact: boolean;
     component: any;
-    props?: any;
+    props?: { props: any };
 }
+
+let updatePreviousRooms: (room: string) => any = () => {
+    console.log('default');
+};
+
+let roomProps = {
+    updatePreviousRooms
+};
 
 const routes: Array<IRoute> = [
     {
-        path: '/',
-        exact: true,
-        component: Home
-    },
-    {
         path: '/room/:id',
         exact: true,
-        component: Room
+        component: Room,
+        props: {
+            props: roomProps
+        }
     },
     {
         path: '/404',
@@ -45,5 +51,5 @@ const routes: Array<IRoute> = [
         component: NotFound
     }
 ];
-
+export { roomProps };
 export default routes;
