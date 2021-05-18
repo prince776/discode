@@ -243,7 +243,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                     <div className="row">
                         <h5 className="col">Code Here</h5>
                         <button
-                            className="btn col-2 mx-3 mb-1 btn-secondary float-right"
+                            className="btn col-l-2 col-md-3 mx-3 mb-1 btn-secondary float-right"
                             onClick={() => {
                                 navigator.clipboard.writeText(body);
                             }}
