@@ -2,6 +2,8 @@
 
 A platform to share code along with voice rooms.
 
+Live at: http://discode.southeastasia.cloudapp.azure.com/
+
 ## Setting up dev enviornment
 
 ### Database
