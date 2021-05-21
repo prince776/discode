@@ -1,13 +1,11 @@
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-}
+require('dotenv').config();
 
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import path from 'path';
 
-const PORT = process.env.PORT || 8080;
+let PORT = 8080;
 const app = express();
 app.set('port', PORT);
 
@@ -65,9 +63,11 @@ server.listen(PORT, () => {
 });
 
 if (process.env.NODE_ENV === 'production') {
+    PORT = process.env.PORT as unknown as number;
+    console.log('env is prod');
     app.use(express.static('frontend/build'));
     app.get('*', (req, res) => {
         console.log('req: ', req.url);
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+        res.sendFile(path.resolve(__dirname, '..', 'frontend', 'build', 'index.html'));
     });
 }

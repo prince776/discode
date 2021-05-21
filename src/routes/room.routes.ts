@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/:id', (req, res) => {
     Room.findById(+req.params.id, (error, data) => {
+        console.log(error);
         if (error) {
             sendError(res, error.message);
         } else {
@@ -20,6 +21,7 @@ router.patch('/:id', (req, res) => {
     const id = +req.params.id;
 
     Room.updateById({ title, body, id, input, language }, (error, data) => {
+        console.log(error);
         if (error) {
             sendError(res, error.message);
         } else {
@@ -33,6 +35,7 @@ router.post('/', (req, res) => {
     if (!title) return sendError(res, "Title can't be empty");
 
     Room.create({ title, body, input, language }, (error, data) => {
+        console.log(error);
         if (error) {
             sendError(res, error.message);
         } else {

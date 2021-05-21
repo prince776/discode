@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  db:
+    image: mysql:8.0.25
+    env_file: ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: $DATABASE_PASSWORD
+      MYSQL_DATABASE: $DATABASE_NAME
+    volumes:
+      - discode-db-config:/etc/mysql
+      - discode-db-data:/var/lib/mysql
+    ports:
+      - $MYSQL_LOCAL_PORT:3306
+  backend:
+    env_file: ./.env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: discode-backend
+    ports: 
+      - $PORT:8080
+    depends_on:
+      - db
+
+volumes:
+  discode-db-config:
+  discode-db-data:
