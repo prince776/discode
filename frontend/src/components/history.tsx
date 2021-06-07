@@ -20,7 +20,7 @@ const History: React.FC<HistoryProps> = ({ previousRooms }) => {
                 </thead>
                 <tbody>
                     {previousRooms.map((room, index) => {
-                        const [roomId, roomTitle] = room.split('-', 2);
+                        const [roomId, roomTitle] = room.split('!', 2);
                         return (
                             <tr key={index}>
                                 <td>

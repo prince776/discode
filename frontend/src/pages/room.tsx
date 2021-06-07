@@ -88,7 +88,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                 if (title) {
                     setTitle(title);
                     document.title = `Discode: ${title}`;
-                    props.updatePreviousRooms(`${id}-${title}`);
+                    props.updatePreviousRooms(`${id}!${title}`);
                 }
                 setBody(body ?? '');
                 setInput(input ?? '');

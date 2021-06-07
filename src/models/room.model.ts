@@ -1,9 +1,10 @@
 import { MysqlError } from 'mysql';
 import { type } from 'os';
 import sql from './db';
+import { uuid } from 'uuidv4';
 
 interface RoomData {
-    id?: number;
+    id?: string;
     title?: string;
     body?: string;
     input?: string;
@@ -19,16 +20,17 @@ class Room {
     }
 
     static create = (data: RoomData, callback: Callback) => {
+        data.id = uuid();
         sql.query('INSERT INTO rooms SET ? ', data, (error, res) => {
             if (error) {
                 callback({ error, message: 'Mysql error' });
             } else {
-                callback(null, { ...data, id: res.insertId });
+                callback(null, { ...data });
             }
         });
     };
 
-    static findById = (id: number, callback: Callback) => {
+    static findById = (id: string, callback: Callback) => {
         sql.query('SELECT * FROM rooms where id = ?', [id], (error, res) => {
             if (error) {
                 callback({ error, message: 'Mysql error' });
