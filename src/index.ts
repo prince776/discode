@@ -35,6 +35,7 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     socket.on('joinroom', (roomId) => {
         socket.join(roomId);
+        socket.broadcast.to(roomId).emit('userjoined');
     });
     socket.on('updateBody', ({ value, roomId }) => {
         socket.broadcast.to(roomId).emit('updateBody', value);

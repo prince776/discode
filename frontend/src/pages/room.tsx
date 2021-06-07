@@ -64,6 +64,13 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     const [inAudio, setInAudio] = useState<boolean>(false);
     const [isMuted, setIsMuted] = useState<boolean>(false);
 
+    socket.on('userjoined', () => {
+        socket.emit('updateBody', { value: body, roomId: id });
+        socket.emit('updateLanguage', { value: language, roomId: id });
+        socket.emit('updateInput', { value: input, roomId: id });
+        socket.emit('updateOutput', { value: output, roomId: id });
+    });
+
     useEffect(() => {
         const id = props.match.params.id;
         setId(id);
@@ -109,7 +116,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             }
             myAudio = null;
         };
-    }, [props]);
+    }, []);
 
     useEffect(() => {
         setInAudio(false);
