@@ -380,7 +380,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                     <button
                         className="btn btn-secondary"
                         onClick={() => {
-                            navigator.clipboard.writeText(`${baseURL}/room/${id}`);
+                            navigator.clipboard.writeText(window.location.href);
                         }}
                     >
                         Copy room link
