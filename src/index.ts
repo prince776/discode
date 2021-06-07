@@ -37,17 +37,25 @@ io.on('connection', (socket) => {
         socket.join(roomId);
         socket.broadcast.to(roomId).emit('userjoined');
     });
+
     socket.on('updateBody', ({ value, roomId }) => {
         socket.broadcast.to(roomId).emit('updateBody', value);
     });
     socket.on('updateInput', ({ value, roomId }) => {
         socket.broadcast.to(roomId).emit('updateInput', value);
     });
-    socket.on('updateLanguage', ({ value, roomId }) => {
-        socket.broadcast.to(roomId).emit('updateLanguage', value);
+
+    socket.on('setBody', ({ value, roomId }) => {
+        socket.broadcast.to(roomId).emit('setBody', value);
     });
-    socket.on('updateOutput', ({ value, roomId }) => {
-        socket.broadcast.to(roomId).emit('updateOutput', value);
+    socket.on('setInput', ({ value, roomId }) => {
+        socket.broadcast.to(roomId).emit('setInput', value);
+    });
+    socket.on('setLanguage', ({ value, roomId }) => {
+        socket.broadcast.to(roomId).emit('setLanguage', value);
+    });
+    socket.on('setOutput', ({ value, roomId }) => {
+        socket.broadcast.to(roomId).emit('setOutput', value);
     });
 
     socket.on('joinAudioRoom', (roomId, userId) => {

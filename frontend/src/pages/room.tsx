@@ -9,6 +9,7 @@ import SplitPane from 'react-split-pane';
 import socket from './../utils/socket';
 import { baseURL } from '../config/config';
 import Peer from 'peerjs';
+import { diff_match_patch } from 'diff-match-patch';
 
 interface RoomProps {
     updatePreviousRooms: (room: string) => any;
@@ -64,28 +65,52 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     const [inAudio, setInAudio] = useState<boolean>(false);
     const [isMuted, setIsMuted] = useState<boolean>(false);
 
-    socket.on('userjoined', () => {
-        socket.emit('updateBody', { value: body, roomId: id });
-        socket.emit('updateLanguage', { value: language, roomId: id });
-        socket.emit('updateInput', { value: input, roomId: id });
-        socket.emit('updateOutput', { value: output, roomId: id });
-    });
+    const dmp = new diff_match_patch();
+
+    useEffect(() => {
+        socket.off('userjoined');
+        socket.on('userjoined', () => {
+            socket.emit('setBody', { value: body, roomId: id });
+            socket.emit('setLanguage', { value: language, roomId: id });
+            socket.emit('setInput', { value: input, roomId: id });
+            socket.emit('setOutput', { value: output, roomId: id });
+        });
+    }, [body, language, input, output]);
+
+    useEffect(() => {
+        socket.off('updateBody');
+        socket.on('updateBody', (patch) => {
+            const [newBody, res] = dmp.patch_apply(patch, body);
+            if (res[0]) setBody(newBody);
+            else console.log('Failed', body, patch);
+        });
+    }, [body]);
+
+    useEffect(() => {
+        socket.off('updateInput');
+        socket.on('updateInput', (patch) => {
+            const [newInput, res] = dmp.patch_apply(patch, input);
+            if (res[0]) setInput(newInput);
+            else console.log('Failed', body, patch);
+        });
+    }, [input]);
 
     useEffect(() => {
         const id = props.match.params.id;
         setId(id);
 
         socket.emit('joinroom', id);
-        socket.on('updateBody', (body) => {
+
+        socket.on('setBody', (body) => {
             setBody(body);
         });
-        socket.on('updateInput', (input) => {
+        socket.on('setInput', (input) => {
             setInput(input);
         });
-        socket.on('updateLanguage', (language) => {
+        socket.on('setLanguage', (language) => {
             setLanguage(language);
         });
-        socket.on('updateOutput', (output) => {
+        socket.on('setOutput', (output) => {
             setOutput(output);
         });
 
@@ -140,7 +165,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                 if (stderr) output += stderr;
                 if (build_stderr) output += build_stderr;
                 setOutput(output);
-                socket.emit('updateOutput', { value: output, roomId: id });
+                socket.emit('setOutput', { value: output, roomId: id });
             });
         }
     }, [submissionStatus]);
@@ -194,13 +219,15 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     };
 
     const handleUpdateBody = (value: string) => {
+        const patch = dmp.patch_make(body, value);
         setBody(value);
-        debounce(() => socket.emit('updateBody', { value, roomId: id }), 100)();
+        debounce(() => socket.emit('updateBody', { value: patch, roomId: id }), 100)();
     };
 
     const handleUpdateInput = (value: string) => {
+        const patch = dmp.patch_make(input, value);
         setInput(value);
-        debounce(() => socket.emit('updateInput', { value, roomId: id }), 100)();
+        debounce(() => socket.emit('updateInput', { value: patch, roomId: id }), 100)();
     };
 
     const handleWidthChange = (x: number) => {
@@ -351,7 +378,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         defaultValue={language}
                         onChange={(event) => {
                             setLanguage(event.target.value);
-                            socket.emit('updateLanguage', {
+                            socket.emit('setLanguage', {
                                 value: event.target.value,
                                 roomId: id
                             });
