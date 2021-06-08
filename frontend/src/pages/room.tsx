@@ -188,14 +188,13 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                 return;
             });
 
-        const params = new URLSearchParams({
+        const params = {
             source_code: body,
             language: language,
             input: input,
             api_key: 'guest'
-        });
-        const querystring = params.toString();
-        API.post(`https://api.paiza.io/runners/create?${querystring}`)
+        };
+        API.post(`https://api.paiza.io/runners/create`, params)
             .then((res) => {
                 const { id, status } = res.data;
                 setSubmissionId(id);
