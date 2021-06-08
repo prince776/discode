@@ -96,11 +96,6 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     }, [input]);
 
     useEffect(() => {
-        const id = props.match.params.id;
-        setId(id);
-
-        socket.emit('joinroom', id);
-
         socket.on('setBody', (body) => {
             setBody(body);
         });
@@ -113,6 +108,14 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
         socket.on('setOutput', (output) => {
             setOutput(output);
         });
+
+        window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
+    }, []);
+
+    useEffect(() => {
+        const id = props.match.params.id;
+        setId(id);
+        socket.emit('joinroom', id);
 
         API.get(`/api/room/${id}`)
             .then((res) => {
@@ -130,18 +133,14 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             .catch((err) => {
                 props.history.push('/404');
             });
-
-        window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
-
         return () => {
-            console.log('called');
             if (myPeer) {
                 socket.emit('leaveAudioRoom', myPeer.id);
                 destroyConnection();
             }
             myAudio = null;
         };
-    }, []);
+    }, [props]);
 
     useEffect(() => {
         setInAudio(false);

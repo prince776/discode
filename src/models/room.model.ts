@@ -9,6 +9,7 @@ interface RoomData {
     body?: string;
     input?: string;
     language?: string;
+    password?: string;
 }
 
 type Callback = (error: { error?: MysqlError; message: string } | null, data?: RoomData) => void;
