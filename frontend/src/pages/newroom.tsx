@@ -5,9 +5,10 @@ import API from '../utils/API';
 
 const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
     const [roomName, setRoomName] = useState<string>('');
+    const [roomPassword, setRoomPassword] = useState<string>('');
 
     const handleSubmit = () => {
-        API.post('/api/room', { title: roomName })
+        API.post('/api/room', { title: roomName, password: roomPassword })
             .then((res) => {
                 props.history.push(`/room/${res.data.data.id}`);
             })
@@ -28,6 +29,16 @@ const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
                             onChange={(e) => setRoomName(e.target.value)}
                             className="form-control"
                             placeholder="Enter room name"
+                        />
+                        <br />
+                        <h1>Enter Password</h1>
+                        <input
+                            type="password"
+                            value={roomPassword}
+                            maxLength={15}
+                            onChange={(e) => setRoomPassword(e.target.value)}
+                            className="form-control"
+                            placeholder="Password Empty"
                         />
                         <small id="emailHelp" className="form-text text-muted">
                             Create your room or <Link to="/joinroom"> Join another </Link>

@@ -109,7 +109,11 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             setOutput(output);
         });
 
-        window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
+        const onWindowResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', onWindowResize);
+        return () => {
+            window.removeEventListener('resize', onWindowResize);
+        };
     }, []);
 
     useEffect(() => {
