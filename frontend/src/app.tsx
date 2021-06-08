@@ -12,7 +12,7 @@ const App: React.FC = () => {
         if (previousRooms[0] === room) return;
         let newRooms = [...previousRooms];
         newRooms.unshift(room);
-        newRooms.slice(0, 20);
+        newRooms.slice(0, 40);
         setPreviousRooms(newRooms);
     };
 

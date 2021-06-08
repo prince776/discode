@@ -30,6 +30,7 @@ interface EditorProps {
     height?: string;
     width?: string;
     readOnly?: boolean;
+    fontSize?: string;
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -39,7 +40,8 @@ const Editor: React.FC<EditorProps> = ({
     setBody,
     height,
     readOnly,
-    width
+    width,
+    fontSize
 }) => {
     return (
         <div>
@@ -51,7 +53,7 @@ const Editor: React.FC<EditorProps> = ({
                 width={width ? width : '100%'}
                 height={height ? height : '73vh'}
                 readOnly={readOnly ? readOnly : false}
-                fontSize={17}
+                fontSize={fontSize ? (isNaN(+fontSize) ? 12 : +fontSize) : 12}
                 name="UNIQUE_ID_OF_DIV"
                 showGutter={true}
                 editorProps={{ $blockScrolling: true }}

@@ -36,6 +36,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
     const languages = Object.keys(languageToEditorMode);
+    const fontSizes = ['8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32'];
     const themes = [
         'monokai',
         'github',
@@ -51,6 +52,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
 
     const [language, setLanguage] = useState<string>(localStorage.getItem('language') ?? 'c');
     const [theme, setTheme] = useState<string>(localStorage.getItem('theme') ?? 'monokai');
+    const [fontSize, setFontSize] = useState<string>(localStorage.getItem('fontSize') ?? '12');
 
     const idleStatus = 'Idle';
     const runningStatus = 'running';
@@ -248,8 +250,11 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
         localStorage.setItem('language', language);
     }, [language]);
 
-    // Voice room stuff
+    useEffect(() => {
+        localStorage.setItem('fontSize', fontSize);
+    }, [fontSize]);
 
+    // Voice room stuff
     const getAudioStream = () => {
         const myNavigator =
             navigator.mediaDevices.getUserMedia ||
@@ -376,7 +381,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     return (
         <div>
             <div className="row container-fluid text-center justify-content-center">
-                <div className="form-group col-3">
+                <div className="form-group col-lg-2 col-md-3">
                     <label>Choose Language</label>
                     <select
                         className="form-select"
@@ -398,7 +403,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         })}
                     </select>
                 </div>
-                <div className="form-group col-3">
+                <div className="form-group col-lg-2 col-md-3">
                     <label>Choose Theme</label>
                     <select
                         className="form-select"
@@ -414,7 +419,23 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         })}
                     </select>
                 </div>
-                <div className="form-group col">
+                <div className="form-group col-lg-2 col-md-3">
+                    <label>Font Size</label>
+                    <select
+                        className="form-select"
+                        defaultValue={fontSize}
+                        onChange={(event) => setFontSize(event.target.value)}
+                    >
+                        {fontSizes.map((fontSize, index) => {
+                            return (
+                                <option key={index} value={fontSize}>
+                                    {fontSize}
+                                </option>
+                            );
+                        })}
+                    </select>
+                </div>
+                <div className="form-group col-lg-2 col-md-3">
                     <br />
                     <button
                         className="btn btn-secondary"
@@ -425,7 +446,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         Copy room link
                     </button>
                 </div>
-                <div className="form-group col">
+                <div className="form-group col-lg-2 col-md-2">
                     <br />
                     <button
                         className={`btn btn-${inAudio ? 'primary' : 'secondary'}`}
@@ -435,7 +456,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                     </button>
                 </div>
                 {inAudio ? (
-                    <div className="form-group col">
+                    <div className="form-group col-lg-1 col-md-2">
                         <br />
                         <button
                             className={`btn btn-${!isMuted ? 'primary' : 'secondary'}`}
@@ -445,10 +466,10 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         </button>
                     </div>
                 ) : (
-                    <div className="form-group col" />
+                    <div className="form-group col-lg-1 col-md-2" />
                 )}
 
-                <div className="form-group col-2">
+                <div className="form-group col-lg-1 col-md-2">
                     <br />
                     <label>Status: {submissionStatus}</label>
                 </div>
@@ -495,6 +516,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         language={languageToEditorMode[language]}
                         body={body}
                         setBody={handleUpdateBody}
+                        fontSize={fontSize}
                     />
                 </div>
                 <div className="text-center">
@@ -506,6 +528,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         setBody={handleUpdateInput}
                         height={'35vh'}
                         width={widthRight}
+                        fontSize={fontSize}
                     />
                     <h5>Output</h5>
                     <Editor
@@ -516,6 +539,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
                         readOnly={true}
                         height={'39vh'}
                         width={widthRight}
+                        fontSize={fontSize}
                     />
                 </div>
             </SplitPane>
