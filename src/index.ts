@@ -37,6 +37,9 @@ io.on('connection', (socket) => {
         socket.join(roomId);
         socket.broadcast.to(roomId).emit('userjoined');
     });
+    socket.on('leaveroom', (roomId) => {
+        socket.leave(roomId);
+    });
 
     socket.on('updateBody', ({ value, roomId }) => {
         socket.broadcast.to(roomId).emit('updateBody', value);

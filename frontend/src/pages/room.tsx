@@ -98,21 +98,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
     useEffect(() => {
         const id = props.match.params.id;
         setId(id);
-
         socket.emit('joinroom', id);
-
-        socket.on('setBody', (body) => {
-            setBody(body);
-        });
-        socket.on('setInput', (input) => {
-            setInput(input);
-        });
-        socket.on('setLanguage', (language) => {
-            setLanguage(language);
-        });
-        socket.on('setOutput', (output) => {
-            setOutput(output);
-        });
 
         API.get(`/api/room/${id}`)
             .then((res) => {
@@ -130,16 +116,35 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             .catch((err) => {
                 props.history.push('/404');
             });
-
-        window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
-
         return () => {
-            console.log('called');
             if (myPeer) {
                 socket.emit('leaveAudioRoom', myPeer.id);
                 destroyConnection();
             }
             myAudio = null;
+            socket.emit('leaveroom', id);
+        };
+    }, [props.match.params.id]);
+
+    useEffect(() => {
+        socket.on('setBody', (body) => {
+            setBody(body);
+        });
+        socket.on('setInput', (input) => {
+            setInput(input);
+        });
+        socket.on('setLanguage', (language) => {
+            setLanguage(language);
+        });
+        socket.on('setOutput', (output) => {
+            setOutput(output);
+        });
+
+        const resizeCallback = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', resizeCallback);
+
+        return () => {
+            window.removeEventListener('resize', resizeCallback);
         };
     }, []);
 
@@ -452,8 +457,8 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             <hr />
             <SplitPane
                 split="vertical"
-                minSize={200}
-                maxSize={windowWidth - 200}
+                minSize={150}
+                maxSize={windowWidth - 150}
                 defaultSize={windowWidth / 2}
                 className="row text-center "
                 style={{ height: '78vh', width: '100vw', marginRight: '0' }}
