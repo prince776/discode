@@ -1,5 +1,4 @@
 import Room from './pages/room';
-import Home from './pages/home';
 import NotFound from './pages/notfound';
 import JoinRoom from './pages/joinroom';
 import NewRoom from './pages/newroom';
