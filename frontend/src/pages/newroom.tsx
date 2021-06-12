@@ -9,7 +9,11 @@ const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
     const handleSubmit = () => {
         API.post('/api/room', { title: roomName })
             .then((res) => {
-                props.history.push(`/room/${res.data.data.id}`);
+                if (roomName.trim().length > 0) {
+                    props.history.push(`/room/${res.data.data.id}`);
+                } else {
+                    alert('Empty username is not permitted');
+                }
             })
             .catch((err) => {
                 alert('Looks like some error occured');
