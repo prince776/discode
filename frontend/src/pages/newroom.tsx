@@ -12,7 +12,7 @@ const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
                 if (roomName.trim().length > 0) {
                     props.history.push(`/room/${res.data.data.id}`);
                 } else {
-                    alert('Empty username is not permitted');
+                    alert('Empty room name is not permitted');
                 }
             })
             .catch((err) => {
