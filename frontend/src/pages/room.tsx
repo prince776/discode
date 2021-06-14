@@ -94,7 +94,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             if (res[0]) setInput(newInput);
             else console.log('Failed', body, patch);
         });
-    }, [input, body, dmp]);
+    }, [input, dmp]);
 
     useEffect(() => {
         const id = props.match.params.id;
