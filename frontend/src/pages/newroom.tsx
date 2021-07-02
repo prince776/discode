@@ -9,11 +9,7 @@ const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
     const handleSubmit = () => {
         API.post('/api/room', { title: roomName })
             .then((res) => {
-                if (roomName.trim().length > 0) {
-                    props.history.push(`/room/${res.data.data.id}`);
-                } else {
-                    alert('Empty room name is not permitted');
-                }
+                props.history.push(`/room/${res.data.data.id}`);
             })
             .catch((err) => {
                 alert('Looks like some error occured');
@@ -39,9 +35,16 @@ const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
                     </div>
                 </div>
                 <div className="form-group text-center pt-3 row justify-content-center">
-                    <button onClick={handleSubmit} className="btn btn-primary col-2 text-lg">
-                        <h3>Join Room</h3>
-                    </button>
+                    {roomName.trim().length > 0 && (
+                        <button onClick={handleSubmit} className="btn btn-primary col-2 text-lg">
+                            <h3>Join Room</h3>
+                        </button>
+                    )}
+                    {roomName.trim().length < 0 && (
+                        <button className="btn btn-primary col-2 text-lg" disabled>
+                            Join Room
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
