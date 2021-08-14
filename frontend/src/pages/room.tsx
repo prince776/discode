@@ -7,7 +7,6 @@ import { debounce } from '../utils/utils';
 import SplitPane from 'react-split-pane';
 
 import socket from './../utils/socket';
-import { baseURL } from '../config/config';
 import Peer from 'peerjs';
 import { diff_match_patch } from 'diff-match-patch';
 
@@ -77,7 +76,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             socket.emit('setInput', { value: input, roomId: id });
             socket.emit('setOutput', { value: output, roomId: id });
         });
-    }, [body, language, input, output]);
+    }, [body, language, input, output, id]);
 
     useEffect(() => {
         socket.off('updateBody');
@@ -86,7 +85,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             if (res[0]) setBody(newBody);
             else console.log('Failed', body, patch);
         });
-    }, [body]);
+    }, [body, dmp]);
 
     useEffect(() => {
         socket.off('updateInput');
@@ -95,7 +94,7 @@ const Room: React.FC<RouteComponentProps<any> & RoomProps> = (props) => {
             if (res[0]) setInput(newInput);
             else console.log('Failed', body, patch);
         });
-    }, [input]);
+    }, [input, dmp]);
 
     useEffect(() => {
         const id = props.match.params.id;

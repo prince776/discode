@@ -26,7 +26,7 @@ const JoinRoom: React.FC<RouteChildrenProps<any>> = (props) => {
                 <div className="form-group text-center pt-3 row justify-content-center">
                     <button
                         onClick={() => {
-                            if (roomId) props.history.push(`/room/${roomId}`);
+                            if (roomId.trim().length > 0) props.history.push(`/room/${roomId}`);
                         }}
                         className="btn btn-primary col-2 text-lg"
                     >
