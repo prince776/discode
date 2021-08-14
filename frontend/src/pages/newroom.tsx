@@ -7,13 +7,17 @@ const NewRoom: React.FC<RouteChildrenProps<any>> = (props) => {
     const [roomName, setRoomName] = useState<string>('');
 
     const handleSubmit = () => {
-        API.post('/api/room', { title: roomName })
-            .then((res) => {
-                props.history.push(`/room/${res.data.data.id}`);
-            })
-            .catch((err) => {
-                alert('Looks like some error occured');
-            });
+        if (roomName.trim().length <= 0) {
+            alert('Empty room names cannot be taken');
+        } else {
+            API.post('/api/room', { title: roomName })
+                .then((res) => {
+                    props.history.push(`/room/${res.data.data.id}`);
+                })
+                .catch((err) => {
+                    alert('Looks like some error occured');
+                });
+        }
     };
 
     return (
